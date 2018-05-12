@@ -2,23 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'header',
-  moduleId: module.id,
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+	selector: 'header',
+	moduleId: module.id,
+	templateUrl: './header.component.html',
+	styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
 
-  isMapView: boolean = false;
+	isMapView: boolean = false;
 
-  constructor(private router: Router) {}
+	constructor(private router: Router) { }
 
-  triggerView() {
-	this.router.navigate(['/' + (this.isMapView ? 'list' : 'map')]);
-	this.isMapView = !this.isMapView;
-  }
+	triggerView() {
+		this.router.navigate(['/' + (this.isMapView ? 'list' : 'map')]);
+		this.isMapView = !this.isMapView;
+	}
 
-  ngOnInit() {
-  }
+	ngOnInit() {
+	}
 
 }

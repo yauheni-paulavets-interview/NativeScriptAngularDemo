@@ -4,6 +4,7 @@ import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
 import { Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/delay';
 
 import { Location } from '../../model';
 
@@ -23,7 +24,7 @@ declare const GMSCameraUpdate: any;
 	moduleId: module.id,
 	templateUrl: './locations-map.component.html'
 })
-export class LocationsMapComponent implements OnInit, OnDestroy {
+export class LocationsMapComponent implements OnDestroy {
 
 	//Component internal Observable
 	//To trigger the same recalculation method upon any change
@@ -39,13 +40,12 @@ export class LocationsMapComponent implements OnInit, OnDestroy {
 	mapView: MapView;
 
 	_filter: any = {};
+	_isInited: boolean = false;
 
 	constructor(@Inject('DefaultLocation') public defaultLocation,
-				@Inject('Zoom') public zoom,
-				private locationStorage: LocationStorageService) {
-	}
+		@Inject('Zoom') public zoom,
+		private locationStorage: LocationStorageService) {
 
-	ngOnInit() {
 		//New location is provided via the google places input + the related location is persisted in Salesforce
 		this.listenToNewLocation();
 
@@ -59,7 +59,7 @@ export class LocationsMapComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this._modifiedLocationSubscription.unsubscribe();
-		this._filterSubscription.unsubscribe();
+		//this._filterSubscription.unsubscribe();
 	}
 
 	listenToNewLocation() {
@@ -80,46 +80,47 @@ export class LocationsMapComponent implements OnInit, OnDestroy {
 	//Recalculates bounds + filtered locations
 	private recalculateFilteredAndBounds() {
 
-		if (this.locationStorage.locations.length) {
-			let filteredLocations = [];
-			this.mapView.removeAllMarkers();
-			if (this._filter.filterField) {
-				filteredLocations = this.locationStorage.locations.filter((location) => {
-					return location[this._filter.filterField] === this._filter.filterValue;
-				});
-			} else {
-				filteredLocations = this.locationStorage.locations;
-			}
-
-			let bounds = GMSCoordinateBounds.alloc().init();
-			filteredLocations.forEach((location) => {
-				let position = Position.positionFromLatLng(location.coordinates__Latitude__s, location.coordinates__Longitude__s);
-				bounds = bounds.includingCoordinate(position);
-
-				var marker = new Marker();
-				marker.position = position;
-				marker.title = location.name__c;
-				marker.snippet = location.name__c;
-				marker.userData = location.Id;
-				this.mapView.addMarker(marker);
+		let filteredLocations = [];
+		this.mapView.clear();
+		if (this._filter.filterField) {
+			filteredLocations = this.locationStorage.locations.filter((location) => {
+				return location[this._filter.filterField] === this._filter.filterValue;
 			});
-
-			let update = GMSCameraUpdate.fitBoundsWithPadding(bounds, 0); 
-			this.mapView.gMap.moveCamera(update);
+		} else {
+			filteredLocations = this.locationStorage.locations;
 		}
+
+		let bounds = GMSCoordinateBounds.alloc().init();
+		filteredLocations.forEach((location) => {
+			let position = Position.positionFromLatLng(location.coordinates__Latitude__s, location.coordinates__Longitude__s);
+			bounds = bounds.includingCoordinate(position);
+
+			var marker = new Marker();
+			marker.position = position;
+			marker.title = location.name__c;
+			marker.snippet = location.name__c;
+			marker.userData = location.Id;
+			this.mapView.addMarker(marker);
+		});
+
+		let update = GMSCameraUpdate.fitBoundsWithPadding(bounds, 0);
+		this.mapView.gMap.moveCamera(update);
+
 	}
 
 
 	onMapReady(event) {
-
-		debugger;
-		this.mapView = event.object;
-		this.locationStorage.getAllLocations()
-			.subscribe(
-				(locations) => {
-					debugger;
-					this._locationsSource.next();
-				});
+		if (!this._isInited) {
+			this._isInited = true;
+			this.mapView = event.object;
+			this.locationStorage.getAllLocations()
+				//If callback is sync - without dealy markers are not drawn.
+				.delay(0)
+				.subscribe(
+					(locations) => {
+						this._locationsSource.next();
+					});
+		}
 	}
 
 	onMarkerEvent(args) {

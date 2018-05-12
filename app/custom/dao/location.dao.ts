@@ -6,14 +6,14 @@ import { Dao } from './dao';
 import { Location } from '../model';
 
 @Injectable()
-export class LocationDao extends Dao{
+export class LocationDao extends Dao {
 
-  constructor(http: Http,
-              @Inject('BaseUrl') baseUrl) {
-    super(http, baseUrl + '/location');
-  }
+	constructor(http: Http,
+		@Inject('BaseUrl') baseUrl) {
+		super(http, baseUrl + '/location');
+	}
 
-  buildModelInstance(jsonRecord) {
-      return new Location(jsonRecord);
-  }
+	buildModelInstance(jsonRecord) {
+		return new Location(jsonRecord);
+	}
 }
