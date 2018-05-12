@@ -1,7 +1,9 @@
 import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import { NativeScriptModule } from "nativescript-angular/nativescript.module";
 import { NativeScriptHttpModule } from "nativescript-angular/http";
+import { NativeScriptFormsModule } from "nativescript-angular/forms"
 import { RouteReuseStrategy } from '@angular/router';
+import { NativeScriptUIAutoCompleteTextViewModule } from "nativescript-ui-autocomplete/angular";
 
 
 import {
@@ -19,7 +21,8 @@ import {
 	genericError,
 	defaultLocation,
 	baseURL,
-	routesToCache
+	routesToCache,
+	googlePlacesUrl
 } from './custom/constants';
 
 import {
@@ -27,11 +30,15 @@ import {
 } from './custom/dao';
 
 import {
-	LocationStorageService
+	LocationStorageService,
+	FilterLocationService,
+	GooglePlacesService
 } from './custom/services';
 
 import {
-	HeaderComponent
+	HeaderComponent,
+	FilterComponent,
+	GooglePlacesAutocompleteComponent
 } from './custom/components';
 
 import * as platform from "platform";
@@ -48,22 +55,30 @@ if (platform.isIOS) {
 	imports: [
 		NativeScriptModule,
 		AppRoutingModule,
-		NativeScriptHttpModule
+		NativeScriptHttpModule,
+		NativeScriptFormsModule,
+		NativeScriptUIAutoCompleteTextViewModule
 	],
 	declarations: [
 		AppComponent,
 		HeaderComponent,
+		FilterComponent,
+		GooglePlacesAutocompleteComponent,
 		...routingComponents
 	],
 	providers: [
 		LocationDao,
 		LocationStorageService,
+		FilterLocationService,
+		GooglePlacesService,
 		{ provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
 		{ provide: 'DefaultLocation', useValue: defaultLocation },
 		{ provide: 'Zoom', useValue: zoom },
 		{ provide: 'BaseUrl', useValue: baseURL },
 		{ provide: 'GenericError', useValue: genericError },
 		{ provide: 'RoutesToCache', useValue: routesToCache },
+		{ provide: 'GoogleApiKey', useValue: googleApiKey },
+		{ provide: 'GooglePlacesUrl', useValue: googlePlacesUrl }
 	],
 	schemas: [
 		NO_ERRORS_SCHEMA

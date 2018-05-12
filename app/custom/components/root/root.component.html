@@ -1,2 +1,8 @@
 <header></header>
-<router-outlet></router-outlet>
+<GridLayout rows="auto, *">
+	<filter row="1"></filter>
+	<!-- <google-places-autocomplete row="1"></google-places-autocomplete> -->
+	<StackLayout row="2">
+		<router-outlet></router-outlet>
+	</StackLayout>
+</GridLayout>

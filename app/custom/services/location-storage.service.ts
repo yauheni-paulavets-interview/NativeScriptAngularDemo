@@ -23,6 +23,7 @@ export class LocationStorageService implements OnDestroy {
 	private deletedRecordsSubscription: Subscription;
 
 	private _locations: Location[];
+	public dataFetched = false;
 	get locations() {
 		return this._locations;
 	}
@@ -41,6 +42,7 @@ export class LocationStorageService implements OnDestroy {
 		if (!this._locations) {
 			let allLocationsObservable = this.locationDao.getAll();
 			allLocationsObservable.subscribe((locations) => {
+				this.dataFetched = true;
 				this._locations = locations;
 				this.allRecordsSource.next(this._locations);
 			});

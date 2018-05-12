@@ -10,11 +10,21 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit {
 
 	isMapView: boolean = false;
+	
 
 	constructor(private router: Router) { }
 
-	triggerView() {
-		this.router.navigate(['/' + (this.isMapView ? 'list' : 'map')]);
+	triggerMpaListView() {
+		// let mainOutlet = this.isMapView ? 'list' : 'map';
+		// let outlets = { 
+		// 	outlets: { 
+		// 		"main": [mainOutlet],
+		// 		"filter-autocomplete": ["filter"]
+		// 	}
+		// };
+		// this.router.navigate(["/root", outlets]);
+		// this.isMapView = !this.isMapView;
+		this.router.navigate(["/" + (this.isMapView ? "list" : "map")]);
 		this.isMapView = !this.isMapView;
 	}
 

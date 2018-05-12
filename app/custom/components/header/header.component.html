@@ -1,6 +1,5 @@
 <ActionBar title="NativeScript Interview Demo">
-    <ActionItem (tap)="triggerView()" icon="~/custom/images/list.png" 
-                ios.position="right" visibility="{{ !isMapView ? 'collapse' : 'visible' }}"></ActionItem>
-    <ActionItem (tap)="triggerView()" icon="~/custom/images/map.png" 
-                ios.position="right" visibility="{{ isMapView ? 'collapse' : 'visible' }}"></ActionItem>
+	<ActionItem (tap)="navToLocationView()" icon="~/custom/images/add.png" ios.position="right" visibility="{{ !isMapView ? 'collapse' : 'visible' }}"></ActionItem>
+	<ActionItem (tap)="triggerMpaListView()" icon="~/custom/images/list.png" ios.position="right" visibility="{{ !isMapView ? 'collapse' : 'visible' }}"></ActionItem>
+	<ActionItem (tap)="triggerMpaListView()" icon="~/custom/images/map.png" ios.position="right" visibility="{{ isMapView ? 'collapse' : 'visible' }}"></ActionItem>
 </ActionBar>

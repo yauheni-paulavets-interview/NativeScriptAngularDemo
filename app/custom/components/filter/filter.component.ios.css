@@ -1,0 +1,15 @@
+.invisible {
+	visibility: collapse;
+}
+
+StackLayout {
+	margin-top: 5;
+	padding: 5;
+}
+
+TextField {
+	font-size: 20;
+	border-bottom-width: 2;
+	border-bottom-color: #0F3E4E;
+	color: #0F3E4E;
+}

@@ -1,4 +1,4 @@
-import { Component, ViewChild, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { registerElement } from 'nativescript-angular/element-registry';
 import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
@@ -9,7 +9,9 @@ import 'rxjs/add/operator/delay';
 import { Location } from '../../model';
 
 import {
-	LocationStorageService
+	LocationStorageService,
+	FilterLocationService,
+	FilterPredicate
 } from '../../services';
 
 // Important - must register MapView plugin in order to use in Angular templates
@@ -24,7 +26,7 @@ declare const GMSCameraUpdate: any;
 	moduleId: module.id,
 	templateUrl: './locations-map.component.html'
 })
-export class LocationsMapComponent implements OnDestroy {
+export class LocationsMapComponent extends FilterPredicate implements OnDestroy {
 
 	//Component internal Observable
 	//To trigger the same recalculation method upon any change
@@ -44,14 +46,15 @@ export class LocationsMapComponent implements OnDestroy {
 
 	constructor(@Inject('DefaultLocation') public defaultLocation,
 		@Inject('Zoom') public zoom,
-		private locationStorage: LocationStorageService) {
+		private locationStorage: LocationStorageService,
+		private filterLocationService: FilterLocationService) {
+
+		super();
 
 		//New location is provided via the google places input + the related location is persisted in Salesforce
 		this.listenToNewLocation();
-
 		//New filter value is provided
-		// this.listenToNewFilterValue();
-
+		this.listenToNewFilterValue();
 		this._locations$.subscribe(() => {
 			this.recalculateFilteredAndBounds();
 		});
@@ -59,7 +62,7 @@ export class LocationsMapComponent implements OnDestroy {
 
 	ngOnDestroy() {
 		this._modifiedLocationSubscription.unsubscribe();
-		//this._filterSubscription.unsubscribe();
+		this._filterSubscription.unsubscribe();
 	}
 
 	listenToNewLocation() {
@@ -68,27 +71,21 @@ export class LocationsMapComponent implements OnDestroy {
 		});
 	}
 
-	// private listenToNewFilterValue() {
-	//   this.filterSubscription = this.filterLocationService.filterLocation$.subscribe((filterValue) => {
-	//     filterValue = filterValue.trim();
-	//     this.filterValue = filterValue.toLowerCase();
-	//     this.locationsSource.next();
-	//   });
-	// }
+	private listenToNewFilterValue() {
+		this._filterSubscription = this.filterLocationService.filterLocation$.subscribe((filter) => {
+			if (this.locationStorage.dataFetched) {
+				this._filter = filter;
+				this._locationsSource.next();
+			}
+		});
+	}
 
 
 	//Recalculates bounds + filtered locations
 	private recalculateFilteredAndBounds() {
 
-		let filteredLocations = [];
 		this.mapView.clear();
-		if (this._filter.filterField) {
-			filteredLocations = this.locationStorage.locations.filter((location) => {
-				return location[this._filter.filterField] === this._filter.filterValue;
-			});
-		} else {
-			filteredLocations = this.locationStorage.locations;
-		}
+		let filteredLocations = this.filter(this.locationStorage.locations, this._filter);
 
 		let bounds = GMSCoordinateBounds.alloc().init();
 		filteredLocations.forEach((location) => {
@@ -110,6 +107,7 @@ export class LocationsMapComponent implements OnDestroy {
 
 
 	onMapReady(event) {
+		//Regardless custom reuse strategy relaunches each trigger.
 		if (!this._isInited) {
 			this._isInited = true;
 			this.mapView = event.object;

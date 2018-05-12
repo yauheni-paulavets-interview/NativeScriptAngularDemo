@@ -1,0 +1,10 @@
+<StackLayout orientation="vertical">
+	<SegmentedBar [items]="myItems" [selectedIndex]="selectedIndex" (selectedIndexChange)="onSelectedIndexChange($event)">
+	</SegmentedBar>
+	<GridLayout rows="auto, auto" backgroundColor="white">
+		<TextField [class.invisible]="visibleInput[1]" row="1" [(ngModel)]="filter.name__c" hint="Filter By Location Name" 
+				   (ngModelChange)='onFilterValueChange($event)'></TextField>
+		<TextField [class.invisible]="visibleInput[0]" row="1" [(ngModel)]="filter.comment__c" hint="Filter By Location Comment" 
+				   (ngModelChange)='onFilterValueChange($event)'></TextField>
+	</GridLayout>
+</StackLayout>

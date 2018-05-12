@@ -8,7 +8,9 @@ import { Subscriber } from 'rxjs/Subscriber';
 import { Location } from '../../model';
 
 import {
-	LocationStorageService
+	LocationStorageService,
+	FilterLocationService,
+	FilterPredicate
 } from '../../services';
 
 //Material table based location view.
@@ -19,7 +21,7 @@ import {
 	styleUrls: ["./locations-list.component.css"],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LocationsListComponent implements OnInit, OnDestroy {
+export class LocationsListComponent extends FilterPredicate implements OnInit, OnDestroy {
 
 	isLoading: boolean = true;
 
@@ -28,7 +30,9 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 	_filterLocationSubscription: Subscription;
 
 	constructor(@Inject('Zoom') private defaultZoom,
-		private locationStorage: LocationStorageService) {
+		private locationStorage: LocationStorageService,
+		private filterLocationService: FilterLocationService) {
+		super();
 	}
 
 	ngOnInit() {
@@ -36,12 +40,12 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 		//New location is provided via the google places input + the related location is persisted in Salesforce
 		this.listenToModifications();
 		//New filter value is provided
-		//this.listenToNewFilterValue();
+		this.listenToNewFilterValue();
 	}
 
 	ngOnDestroy() {
 		this._modifiedLocationSubscription.unsubscribe();
-		//this._filterLocationSubscription.unsubscribe();
+		this._filterLocationSubscription.unsubscribe();
 	}
 
 	//Pulls the all locations from Salesforce
@@ -62,11 +66,12 @@ export class LocationsListComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	// private listenToNewFilterValue() {
-	//   this._filterLocationSubscription = this.filterLocationService.filterLocation$.subscribe((filterValue) => {
-	//       filterValue = filterValue.trim();
-	//       filterValue = filterValue.toLowerCase();
-	//       this.dataSource.filter = filterValue;
-	//   });
-	// }
+	private listenToNewFilterValue() {
+		this._filterLocationSubscription = this.filterLocationService.filterLocation$.subscribe((filter) => {
+			if (this.locationStorage.dataFetched) {
+				let filtered = this.filter(this.locationStorage.locations, filter);
+				this.locations$.next(filtered);
+			}
+		});
+	}
 }
