@@ -19,17 +19,6 @@ const routes: Routes = [
 		]
 	}
 ];
-// const routes: Routes = [
-// 	{ path: '', redirectTo: '/root/(filter-autocomplete:filter//main:list)', pathMatch: 'full' },
-// 	{
-// 		path: "root", component: RootComponent, children: [
-// 			{ path: "list", component: LocationsListComponent, outlet: 'main', data: { key: "list" }, },
-// 			{ path: "map", component: LocationsMapComponent, outlet: 'main', data: { key: "map" } },
-// 			{ path: 'filter', component: FilterComponent, outlet: 'filter-autocomplete', data: { key: "filter" } },
-// 			{ path: 'autocomplete', component: GooglePlacesAutocompleteComponent, outlet: 'filter-autocomplete' }
-// 		]
-// 	}
-// ];
 
 @NgModule({
 	imports: [NativeScriptRouterModule.forRoot(routes)],
