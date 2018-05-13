@@ -16,3 +16,7 @@ TextView {
     vertical-align: middle;
     width: 100;
 }
+
+.grayed {
+	background-color: #CDCBCB;
+}

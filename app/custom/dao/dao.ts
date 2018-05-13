@@ -10,14 +10,12 @@ import { pipe } from 'rxjs/Rx';
 //Inherited by location/attachment services within the same dir
 export abstract class Dao {
 
-	protected newRecordsSource: Subject<any> = new Subject<any>();
-	protected updateRecordsSource: Subject<any> = new Subject<any>();
+	protected newUpdateRecordsSource: Subject<any> = new Subject<any>();
 	protected allRecordsSource: ReplaySubject<any[]> = new ReplaySubject<any[]>();
 	protected deleteRecordsSource: Subject<any> = new Subject<any>();
 
 	//list/map components listen to the operations completion
-	newRecords$ = this.newRecordsSource.asObservable();
-	updateRecords$ = this.updateRecordsSource.asObservable();
+	newUpdateRecords$ = this.newUpdateRecordsSource.asObservable();
 	allRecords$ = this.allRecordsSource.asObservable();
 	deleteRecords$ = this.deleteRecordsSource.asObservable();
 
@@ -49,7 +47,8 @@ export abstract class Dao {
 			.pipe(
 				mapResponseToJson,
 				mapJsonToModel,
-				catchSmh
+				catchSmh,
+				share()
 			);
 
 		if (emit) {
@@ -83,11 +82,7 @@ export abstract class Dao {
 		if (emit) {
 			newDirtyRecordObservable.subscribe(
 				(record) => {
-					if (recordToBeHandled.Id) {
-						this.emitUpdateRecord(record);
-					} else {
-						this.emitNewRecord(record);
-					}
+					this.emitUpdateNewRecord(record);
 				},
 				() => console.log('Insert failed', recordToBeHandled)
 			);
@@ -96,12 +91,8 @@ export abstract class Dao {
 		return newDirtyRecordObservable;
 	}
 
-	protected emitNewRecord(newRecord) {
-		this.newRecordsSource.next(newRecord);
-	}
-
-	private emitUpdateRecord(updatedRecord) {
-		this.updateRecordsSource.next(updatedRecord);
+	protected emitUpdateNewRecord(newRecord) {
+		this.newUpdateRecordsSource.next(newRecord);
 	}
 
 	delete(recordToBeDeleted, emit: boolean = false): Observable<any> {
@@ -109,7 +100,7 @@ export abstract class Dao {
 		let deleteRecordObservable = this.http.delete(
 			this.destinationUrl + "/" + recordToBeDeleted.Id,
 			{ headers: this.getCommonHeaders() }
-		);
+		).pipe(share());
 
 		if (emit) {
 			deleteRecordObservable.subscribe(() => this.emitDeleteRecord(recordToBeDeleted.Id), () => console.log('Deletion failed', recordToBeDeleted));

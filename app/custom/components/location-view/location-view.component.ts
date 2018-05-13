@@ -86,4 +86,15 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 		}
 		return result;
 	}
+
+	delete() {
+		this.isLoading = true;
+		this.locationDao.delete(this.location, true)
+			.subscribe((location) => {
+				this.navigationService.back();
+				this.isLoading = false;
+			}, (error) => {
+				this.isLoading = false;
+			});
+	}
 }

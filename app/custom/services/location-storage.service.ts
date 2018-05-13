@@ -53,8 +53,13 @@ export class LocationStorageService implements OnDestroy {
 
 	private establishListeners() {
 		//Notifies the views upon a location insertion
-		this.newRecordsSubscription = this.locationDao.newRecords$.subscribe((newLocation) => {
-			this._locations.push(newLocation);
+		this.newRecordsSubscription = this.locationDao.newUpdateRecords$.subscribe((newLocation) => {
+			let existentRecordIndex = this._locations.findIndex((location) => location.Id === newLocation.Id);
+			if (existentRecordIndex > -1) {
+				this._locations.splice(existentRecordIndex, 1, newLocation);
+			} else {
+				this._locations.push(newLocation);
+			}
 			this.modificationsSource.next();
 		});
 
