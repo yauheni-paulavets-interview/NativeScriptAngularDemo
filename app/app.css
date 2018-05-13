@@ -36,6 +36,15 @@ TextView.link {
 	text-decoration: underline;
 }
 
+.btn-img {
+	border-radius: 17;
+	border-width: 2;
+	border-color: #01171F;
+	background-color: #255768;
+	width: 37;
+	height: 31;
+}
+
 .show {
     animation-name: show;
     animation-duration: 1s;

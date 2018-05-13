@@ -1,13 +1,17 @@
 <StackLayout  class="attachments">
 	<FlexboxLayout>
 		<Label text="Attachments"></Label>
-		<Button text="Upload" (tap)="upload()" class="submit-button"></Button>
+		<FlexboxLayout padding="7" class="btn-img" (tap)="upload()">
+			<Image src="~/custom/images/upload.png"></Image>
+		</FlexboxLayout>
 	</FlexboxLayout>
 	<StackLayout *ngIf="attachments.length > 0" [class.show]="!areAttachmentsLoading">
 		<ListView [items]="attachments">
 			<ng-template let-item="item">
 				<GridLayout columns="auto, *" class="attachment">
-					<Button *ngIf="!item.isProcessing" col="0" text="Delete" class="submit-button" (tap)="deleteAttach(item)"></Button>
+					<FlexboxLayout *ngIf="!item.isProcessing" col="0" padding="7" class="btn-img btn-image-custom" (tap)="deleteAttach(item)">
+						<Image src="~/custom/images/trash.png"></Image>
+					</FlexboxLayout>
 					<ActivityIndicator col="0" busy="true" *ngIf="item.isProcessing"></ActivityIndicator>
 					<FlexboxLayout col="1" justifyContent="space-around">
 						<TextView [text]="item.attachment.Name" [editable]="false" class="link" (tap)="showAttach(item.downloadUrl + item.attachment.Id)"></TextView>
