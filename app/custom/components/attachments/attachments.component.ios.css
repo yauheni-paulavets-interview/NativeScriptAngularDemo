@@ -1,0 +1,25 @@
+.attachments {
+	margin: 15 10 0 10;
+}
+
+.attachments StackLayout {
+	border-right-width: 2;
+	border-right-color: #022835;
+	border-left-width: 2;
+	border-left-color: #022835;
+}
+
+.attachments GridLayout {
+	padding: 0 10 0 10;
+}
+
+.attachments .submit-button {
+	margin: 0;
+	font-size: 15;
+}
+
+.attachments Label {
+	margin-bottom: 10;
+	font-size: 24;
+	font-weight: 700;
+}

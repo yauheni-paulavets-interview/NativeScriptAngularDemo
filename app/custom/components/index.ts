@@ -5,3 +5,4 @@ export { RootComponent } from './root/root.component';
 export { FilterComponent } from './filter/filter.component';
 export { GooglePlacesAutocompleteComponent } from './google-places-autocomplete/google-places-autocomplete.component';
 export { LocationViewComponent } from './location-view/location-view.component';
+export { AttachmentsComponent } from './attachments/attachments.component';

@@ -18,9 +18,27 @@ Label {
     color:#022835;
 }
 
+.submit-button {
+	margin: 10;
+    background-color: #0F3E4E;
+    border-radius: 5;
+    color: white;
+    font-family: FontAwesome;
+    font-size: 24;
+    vertical-align: middle;
+    width: 100;
+}
+
+TextView.link {
+	padding: 10;
+	font-size: 20;
+	color: blue;
+	text-decoration: underline;
+}
+
 .show {
     animation-name: show;
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-fill-mode: forwards;
 }
 @keyframes show {

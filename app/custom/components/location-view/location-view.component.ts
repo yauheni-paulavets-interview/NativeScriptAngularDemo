@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { TextView } from "ui/text-view";
 import { openUrl } from "utils/utils";
 
 import { Observable } from 'rxjs/Observable';
@@ -15,11 +14,10 @@ import {
 } from '../../services';
 
 import {
-	LocationDao,
-	AttachmentDao
+	LocationDao
 } from '../../dao';
 
-import { Location, Attachment } from '~/custom/model';
+import { Location } from '~/custom/model';
 
 @Component({
 	selector: 'location-view',
@@ -32,16 +30,12 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 	persistedLocationInitialState: Location;
 	location: Location = new Location({ comment__c: '' });
 	isLoading: boolean = false;
-	areAttachmentsLoading: boolean = true;
 
 	_routeParamsSubscr: Subscription;
-
-	attachments: Array<Attachment> = [];
 
 	constructor(private googlePlacesService: GooglePlacesService,
 		private navigationService: NavigationService,
 		private locationDao: LocationDao,
-		private attachmentDao: AttachmentDao,
 		private locationStorageService: LocationStorageService,
 		private route: ActivatedRoute) { }
 
@@ -56,9 +50,6 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 
 		this._routeParamsSubscr = this.route.queryParams.pipe(
 			filter((params) => {
-				if (!params['id']) {
-					self.areAttachmentsLoading = false;
-				}
 				return !!params['id'];
 			}),
 			switchMap((params) => {
@@ -67,7 +58,6 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 		).subscribe((location) => {
 			self.persistedLocationInitialState = Object.assign({}, location);
 			self.location = Object.assign({}, location);
-			self._fetchAttachments(self.location.Id);
 		});
 	}
 
@@ -108,36 +98,5 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 			}, (error) => {
 				this.isLoading = false;
 			});
-	}
-
-	_fetchAttachments(locationId) {
-		this.attachmentDao.getByParentId(locationId)
-			.subscribe((attachments) => {
-				this.areAttachmentsLoading = false;
-				this.attachments = attachments;
-			});
-	}
-
-	showAttach(url) {
-		openUrl(url);
-	}
-
-	deleteAttach(attachmentWrapper: Attachment) {
-		let oldAttachIndex = this.attachments.findIndex((oldAttachment) => {
-			return !oldAttachment.isProcessing && !oldAttachment.errorTakesPlace && attachmentWrapper.attachment.Id === oldAttachment.attachment.Id;
-		});
-
-		attachmentWrapper.isProcessing = true;
-		this.attachmentDao.delete(attachmentWrapper.attachment)
-			.subscribe(
-				(attachment) => {
-					attachmentWrapper.isProcessing = false;
-					this.attachments.splice(oldAttachIndex, 1);
-				},
-				(error) => {
-					attachmentWrapper.isProcessing = false;
-					attachmentWrapper.errorTakesPlace = true;
-				}
-			);
 	}
 }

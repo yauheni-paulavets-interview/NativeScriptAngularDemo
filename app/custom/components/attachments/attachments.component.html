@@ -1,0 +1,16 @@
+<StackLayout *ngIf="attachments.length > 0" class="attachments" [class.show]="!areAttachmentsLoading" [class.hide]="isLocationLoading">
+	<Label text="Attachments"></Label>
+	<StackLayout>
+		<ListView [items]="attachments">
+			<ng-template let-item="item">
+				<GridLayout columns="auto, *">
+					<Button *ngIf="!item.isProcessing" col="0" text="Delete" class="submit-button" (tap)="deleteAttach(item)"></Button>
+					<ActivityIndicator col="0" busy="true" *ngIf="item.isProcessing"></ActivityIndicator>
+					<FlexboxLayout col="1" justifyContent="space-around">
+						<TextView [text]="item.attachment.Name" [editable]="false" class="link" (tap)="showAttach(item.downloadUrl + item.attachment.Id)"></TextView>
+					</FlexboxLayout>
+				</GridLayout>
+			</ng-template>
+		</ListView>
+	</StackLayout>
+</StackLayout>

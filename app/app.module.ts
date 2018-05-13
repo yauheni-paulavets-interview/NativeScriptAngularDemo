@@ -39,6 +39,7 @@ import {
 
 import {
 	HeaderComponent,
+	AttachmentsComponent
 } from './custom/components';
 
 import * as platform from "platform";
@@ -62,6 +63,7 @@ if (platform.isIOS) {
 	declarations: [
 		AppComponent,
 		HeaderComponent,
+		AttachmentsComponent,
 		...routingComponents
 	],
 	providers: [
