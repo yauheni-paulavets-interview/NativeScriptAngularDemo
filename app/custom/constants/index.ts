@@ -9,5 +9,5 @@ export const defaultLocation = {
 	coordinates__Latitude__s: 53.847519299999995,
 	coordinates__Longitude__s: 27.4549606
 };
-export const routesToCache = ["map", "list", "filter"];
+export const routesToCache = ["list", "filter"]; //map isn't added as per 'marker selection' events becomes unbound
 export const googlePlacesUrl = 'https://maps.googleapis.com/maps/api/geocode/json'// 'https://maps.googleapis.com/maps/api/place/textsearch/json' 'https://maps.googleapis.com/maps/api/place/autocomplete/json';

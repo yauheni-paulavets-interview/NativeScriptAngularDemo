@@ -3,8 +3,7 @@ import { Http, Headers, Response } from "@angular/http";
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { map } from 'rxjs/operators';
-import { catchError } from 'rxjs/operators';
+import { map, catchError, share } from 'rxjs/operators';
 import { pipe } from 'rxjs/Rx';
 
 //Handles rest based crud opearions
@@ -63,33 +62,34 @@ export abstract class Dao {
 		this.allRecordsSource.next(allRecords);
 	}
 
-	insertUpdate(record, emit: boolean = false): Observable<any> {
+	insertUpdate(recordToBeHandled, emit: boolean = false): Observable<any> {
 
 		let mapResponseToJson = map((res: Response) => res.json());
 		let mapJsonToModel = map(data => {
 			return this.buildModelInstance(data);
 		});
 
-		let newDirtyRecordObservable = this.http[record.Id ? "put" : "post"](
+		let newDirtyRecordObservable = this.http[recordToBeHandled.Id ? "put" : "post"](
 			this.destinationUrl,
-			JSON.stringify(record),
+			JSON.stringify(recordToBeHandled),
 			{ headers: this.getCommonHeaders() }
 		)
 			.pipe(
 				mapResponseToJson,
-				mapJsonToModel
+				mapJsonToModel,
+				share()
 			);
 
 		if (emit) {
 			newDirtyRecordObservable.subscribe(
 				(record) => {
-					if (record.Id) {
+					if (recordToBeHandled.Id) {
 						this.emitUpdateRecord(record);
 					} else {
 						this.emitNewRecord(record);
 					}
 				},
-				() => console.log('Insert failed', record)
+				() => console.log('Insert failed', recordToBeHandled)
 			);
 		}
 

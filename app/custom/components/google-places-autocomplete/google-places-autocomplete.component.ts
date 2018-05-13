@@ -7,11 +7,8 @@ import { Color } from "color";
 import {
 	GooglePlacesService
 } from '../../services';
+import { Location } from '~/custom/model';
 
-declare var UIFont: any;
-declare var UIView: any;
-declare var CGRectMake: any;
-declare var UITextFieldViewMode: any;
 
 @Component({
 	selector: 'google-places-autocomplete',
@@ -21,7 +18,9 @@ declare var UITextFieldViewMode: any;
 })
 export class GooglePlacesAutocompleteComponent implements OnInit {
 
-	private _items: ObservableArray<TokenModel> = new ObservableArray<TokenModel>();
+	_items: ObservableArray<TokenModel> = new ObservableArray<TokenModel>();
+	_lastSelectedLocation: Location;
+	_justSelected: boolean = false; 
 
 	@ViewChild('locationAutocomplete') locationAutocomplete: RadAutoCompleteTextViewComponent;
 
@@ -33,21 +32,28 @@ export class GooglePlacesAutocompleteComponent implements OnInit {
 	}
 
 	get dataItems(): ObservableArray<TokenModel> {
-        return this._items;
+		return this._items;
 	}
 
-	public onAutoCompleteLoad(args: AutoCompleteEventData) {
-		//this.locationAutocomplete.autoCompleteTextView.ios.color = new Color("#6C929F").ios;
+	handleTextChanged(args) {
+		if (this._justSelected) {
+			this._justSelected = false;
+		} else if (this._lastSelectedLocation) {
+			this.googlePlacesService.locationSelectionSource.next(
+				this._lastSelectedLocation.name__c === args.text ? this._lastSelectedLocation : new Location({})
+			);
+		}
+	}
 
-		// this.locationAutocomplete.autoCompleteTextView.nativeView.backgroundColor = new Color("#301217").ios;
-
-		// this.locationAutocomplete.autoCompleteTextView.suggestionView.ios.backgroundColor = new Color("#301217").ios;
-
-		// this.locationAutocomplete.autoCompleteTextView.nativeView.height = 10; 
-
-        let nativeEditText = this.locationAutocomplete.autoCompleteTextView.nativeView;
-        nativeEditText.font = UIFont.fontWithNameSize("FuturaT", 14);
-        nativeEditText.leftView = new UIView({ frame: CGRectMake(7,16,7,16) });
-        nativeEditText.leftViewMode = UITextFieldViewMode.Always;
+	handleAutocomplete(args) {
+		this._justSelected = true;
+		this._lastSelectedLocation = this.googlePlacesService.getLocationByName(args.text);
+		if (this._lastSelectedLocation) {
+			this.googlePlacesService.locationSelectionSource.next(this._lastSelectedLocation);
+		}
 	}
 }
+
+	
+
+	

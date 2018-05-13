@@ -66,4 +66,8 @@ export class LocationStorageService implements OnDestroy {
 		});
 	}
 
+	getLocationById(id: string) {
+		return this._locations.find((location) => location.Id === id);
+	}
+
 }

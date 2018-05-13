@@ -3,6 +3,10 @@ import { Router, NavigationEnd } from '@angular/router';
 
 import 'rxjs/add/operator/filter';
 
+import {
+	NavigationService
+} from '../../services';
+
 @Component({
 	selector: 'header',
 	moduleId: module.id,
@@ -25,7 +29,8 @@ export class HeaderComponent implements OnInit {
 	};
 
 
-	constructor(private router: Router) { }
+	constructor(private router: Router,
+		private navigationService: NavigationService) { }
 
 	ngOnInit() {
 		this.router.events
@@ -37,6 +42,11 @@ export class HeaderComponent implements OnInit {
 				this._currentView = e.url.replace(/^.*\(main\:/, '').replace(/\/\/.*$/, '');
 				this._currentViewIcon = this._currentView === 'map' ? 'list' : 'map';
 			});
+
+		this.navigationService.request$
+			.subscribe((param: any) => {
+				this[param.operation](param.data);
+			})
 	}
 
 	triggerView(visibleView) {
@@ -48,5 +58,25 @@ export class HeaderComponent implements OnInit {
 		for (let viewItem in this.view) {
 			this.view[viewItem] = false;
 		}
+	}
+
+	back() {
+		this.triggerView([this.previousViewIcon, 'location']);
+		this.router.navigate(['/root', { outlets: { main: [this.previousView], filterautocomplete: ['filter'] } }]);
+	}
+
+	locationUpdate(locationId) {
+		this.triggerView(['back']);
+		this.router.navigate(['/root', {
+			outlets: {
+				main: ['location'],
+				filterautocomplete: null
+			}
+		}],
+		{
+			queryParams: {
+				id: locationId
+			}
+		});
 	}
 }

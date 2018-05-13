@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Inject, OnInit, OnDestroy } from '@
 const listViewModule = require("tns-core-modules/ui/list-view");
 
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { Subscriber } from 'rxjs/Subscriber';
 
@@ -23,6 +24,12 @@ import {
 })
 export class LocationsListComponent extends FilterPredicate implements OnInit, OnDestroy {
 
+	//Component internal Observable
+	//To trigger the same recalculation method upon any change
+	_locationsSource: Subject<any> = new Subject<any>();
+	_locations$ = this._locationsSource.asObservable();
+	_filter: any = {};
+
 	isLoading: boolean = true;
 
 	locations$ = new BehaviorSubject<Location[]>([]);
@@ -36,11 +43,15 @@ export class LocationsListComponent extends FilterPredicate implements OnInit, O
 	}
 
 	ngOnInit() {
-		this.initContextRecords();
+		this._initContextRecords();
 		//New location is provided via the google places input + the related location is persisted in Salesforce
-		this.listenToModifications();
+		this._listenToModifications();
 		//New filter value is provided
-		this.listenToNewFilterValue();
+		this._listenToNewFilterValue();
+
+		this._locations$.subscribe(() => {
+			this._recalculateList();
+		});
 	}
 
 	ngOnDestroy() {
@@ -50,7 +61,7 @@ export class LocationsListComponent extends FilterPredicate implements OnInit, O
 
 	//Pulls the all locations from Salesforce
 	//Location storage is shared service between both views to don't execute extra server-trips
-	private initContextRecords() {
+	_initContextRecords() {
 		let allLocationsSubscription = this.locationStorage.getAllLocations()
 			.subscribe(
 				(locations) => {
@@ -60,18 +71,23 @@ export class LocationsListComponent extends FilterPredicate implements OnInit, O
 				});
 	}
 
-	private listenToModifications() {
+	_listenToModifications() {
 		this._modifiedLocationSubscription = this.locationStorage.modifications$.subscribe(() => {
-			this.locations$.next(this.locationStorage.locations);
+			this._locationsSource.next();
 		});
 	}
 
-	private listenToNewFilterValue() {
+	_listenToNewFilterValue() {
 		this._filterLocationSubscription = this.filterLocationService.filterLocation$.subscribe((filter) => {
 			if (this.locationStorage.dataFetched) {
-				let filtered = this.filter(this.locationStorage.locations, filter);
-				this.locations$.next(filtered);
+				this._filter = filter;
+				this._locationsSource.next();
 			}
 		});
+	}
+
+	_recalculateList() {
+		let filtered = this.filter(this.locationStorage.locations, this._filter);
+		this.locations$.next(filtered);
 	}
 }

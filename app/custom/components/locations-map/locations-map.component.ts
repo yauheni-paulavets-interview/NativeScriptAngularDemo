@@ -11,7 +11,8 @@ import { Location } from '../../model';
 import {
 	LocationStorageService,
 	FilterLocationService,
-	FilterPredicate
+	FilterPredicate,
+	NavigationService
 } from '../../services';
 
 // Important - must register MapView plugin in order to use in Angular templates
@@ -47,16 +48,17 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 	constructor(@Inject('DefaultLocation') public defaultLocation,
 		@Inject('Zoom') public zoom,
 		private locationStorage: LocationStorageService,
-		private filterLocationService: FilterLocationService) {
+		private filterLocationService: FilterLocationService,
+		private navigationService: NavigationService) {
 
 		super();
 
 		//New location is provided via the google places input + the related location is persisted in Salesforce
-		this.listenToNewLocation();
+		this._listenToNewLocation();
 		//New filter value is provided
-		this.listenToNewFilterValue();
+		this._listenToNewFilterValue();
 		this._locations$.subscribe(() => {
-			this.recalculateFilteredAndBounds();
+			this._recalculateFilteredAndBounds();
 		});
 	}
 
@@ -65,13 +67,13 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 		this._filterSubscription.unsubscribe();
 	}
 
-	listenToNewLocation() {
+	_listenToNewLocation() {
 		this._modifiedLocationSubscription = this.locationStorage.modifications$.subscribe((newLocation) => {
 			this._locationsSource.next();
 		});
 	}
 
-	private listenToNewFilterValue() {
+	_listenToNewFilterValue() {
 		this._filterSubscription = this.filterLocationService.filterLocation$.subscribe((filter) => {
 			if (this.locationStorage.dataFetched) {
 				this._filter = filter;
@@ -82,7 +84,7 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 
 
 	//Recalculates bounds + filtered locations
-	private recalculateFilteredAndBounds() {
+	_recalculateFilteredAndBounds() {
 
 		this.mapView.clear();
 		let filteredLocations = this.filter(this.locationStorage.locations, this._filter);
@@ -102,7 +104,6 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 
 		let update = GMSCameraUpdate.fitBoundsWithPadding(bounds, 0);
 		this.mapView.gMap.moveCamera(update);
-
 	}
 
 
@@ -119,16 +120,11 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 						this._locationsSource.next();
 					});
 		}
+
 	}
 
 	onMarkerEvent(args) {
-		console.log("Marker Event: '" + args.eventName
-			+ "' triggered on: " + args.marker.title
-			+ ", Lat: " + args.marker.position.latitude + ", Lon: " + args.marker.position.longitude, args);
+		let marker = args.marker;
+		this.navigationService.locationUpdate(marker.userData);
 	}
-
-	onCameraChanged(args) {
-		console.log("Camera changed: " + JSON.stringify(args.camera));
-	}
-
 }
