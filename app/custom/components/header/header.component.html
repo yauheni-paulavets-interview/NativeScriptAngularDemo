@@ -1,6 +1,14 @@
 <ActionBar title="NativeScript Interview Demo">
-	<ActionItem (tap)="triggerBack()" title="Back" ios.position="right" visibility="{{ view.back ? 'visible' : 'collapse' }}"></ActionItem>
-	<ActionItem (tap)="triggerLocation()" icon="~/custom/images/add.png" ios.position="right" visibility="{{ view.location ? 'visible' : 'collapse' }}"></ActionItem>
-	<ActionItem (tap)="triggerList()" icon="~/custom/images/list.png" ios.position="right" visibility="{{ view.list ? 'visible' : 'collapse' }}"></ActionItem>
-	<ActionItem (tap)="triggerMap()" icon="~/custom/images/map.png" ios.position="right" visibility="{{ view.map ? 'visible' : 'collapse' }}"></ActionItem>
+	<ActionItem (tap)="triggerView([previousViewIcon, 'location'])" icon="~/custom/images/return.png" ios.position="right" 
+				visibility="{{ view.back ? 'visible' : 'collapse' }}"
+				[nsRouterLink]="['/root', { outlets: { main: [previousView], filterautocomplete: ['filter'] } } ]"></ActionItem>
+	<ActionItem (tap)="triggerView(['back'])" icon="~/custom/images/add.png" 
+				ios.position="right" visibility="{{ view.location ? 'visible' : 'collapse' }}"
+				[nsRouterLink]="['/root', { outlets: { main: ['location'], filterautocomplete: ['autocomplete'] } } ]"></ActionItem>
+	<ActionItem (tap)="triggerView(['map', 'location'])" icon="~/custom/images/list.png" 
+				ios.position="right" visibility="{{ view.list ? 'visible' : 'collapse' }}"
+				[nsRouterLink]="['/root', { outlets: { main: ['list'], filterautocomplete: ['filter'] } } ]"></ActionItem>
+	<ActionItem (tap)="triggerView(['list', 'location'])" icon="~/custom/images/map.png" 
+				ios.position="right" visibility="{{ view.map ? 'visible' : 'collapse' }}"
+				[nsRouterLink]="['/root', { outlets: { main: ['map'], filterautocomplete: ['filter'] } } ]"></ActionItem>
 </ActionBar>

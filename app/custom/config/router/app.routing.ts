@@ -6,16 +6,20 @@ import {
 	LocationsListComponent,
 	LocationsMapComponent,
 	RootComponent,
-	LocationViewComponent
+	LocationViewComponent,
+	FilterComponent,
+	GooglePlacesAutocompleteComponent
 } from '../../components';
 
 const routes: Routes = [
+	{ path: '', redirectTo: '/root/(filterautocomplete:filter//main:list)', pathMatch: 'full' },
 	{
-		path: "", component: RootComponent, children: [
-			{ path: "list", component: LocationsListComponent,  data: { key: "list" },  },
-			{ path: "map", component: LocationsMapComponent, data: { key: "map" } },
-			{ path: "location", component: LocationViewComponent, data: { key: "location" } },
-			{ path: "", redirectTo: "/list", pathMatch: "full" }
+		path: "root", component: RootComponent, children: [
+			{ path: "list", component: LocationsListComponent, outlet: 'main', data: { key: "list" }, },
+			{ path: "map", component: LocationsMapComponent, outlet: 'main', data: { key: "map" } },
+			{ path: "location", component: LocationViewComponent, outlet: 'main', data: { key: "location" } },
+			{ path: 'filter', component: FilterComponent, outlet: 'filterautocomplete', data: { key: "filter" } },
+			{ path: 'autocomplete', component: GooglePlacesAutocompleteComponent, outlet: 'filterautocomplete' }
 		]
 	}
 ];
@@ -30,5 +34,7 @@ export const routingComponents = [
 	LocationsListComponent,
 	LocationsMapComponent,
 	LocationViewComponent,
-	RootComponent
+	RootComponent,
+	FilterComponent,
+	GooglePlacesAutocompleteComponent
 ];

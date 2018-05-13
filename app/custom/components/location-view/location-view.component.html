@@ -1,5 +1,7 @@
-<GridLayout rows="auto, *">
-	<google-places-autocomplete row="1"></google-places-autocomplete>
-	<StackLayout row="2">
-	</StackLayout>
-</GridLayout>
+<StackLayout class="input-field">
+	<TextView [(ngModel)]="comment" hint="Enter Location Comment" [editable]="true" ></TextView>
+	<GridLayout rows="auto" columns="*, auto">
+		<Label text="" col="0"></Label>
+		<Button col="1" text="Submit" class="submit-button" (tap)="submit()"></Button>
+	</GridLayout>
+</StackLayout>

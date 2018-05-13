@@ -1,0 +1,18 @@
+TextView {
+	padding: 10;
+	font-size: 20;
+	border-bottom-width: 2;
+	border-bottom-color: #0F3E4E;
+	color: #0F3E4E;
+}
+
+.submit-button {
+	margin: 10;
+    background-color: #0F3E4E;
+    border-radius: 5;
+    color: white;
+    font-family: FontAwesome;
+    font-size: 24;
+    vertical-align: middle;
+    width: 100;
+}

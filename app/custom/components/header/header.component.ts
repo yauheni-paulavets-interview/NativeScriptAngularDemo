@@ -11,7 +11,11 @@ import 'rxjs/add/operator/filter';
 })
 export class HeaderComponent implements OnInit {
 
-	_previousUrl;
+	_currentView = 'list';
+	_currentViewIcon = 'map';
+
+	previousView;
+	previousViewIcon;
 
 	view = {
 		list: false,
@@ -25,43 +29,19 @@ export class HeaderComponent implements OnInit {
 
 	ngOnInit() {
 		this.router.events
-			.filter(event => event instanceof NavigationEnd)
+			.filter((e) => e instanceof NavigationEnd)
 			.subscribe((e: any) => {
-				this._previousUrl = e.url;
-				console.log('!!!!!', this._previousUrl);
+				this.previousView = this._currentView;
+				this.previousViewIcon = this._currentViewIcon;
+
+				this._currentView = e.url.replace(/^.*\(main\:/, '').replace(/\/\/.*$/, '');
+				this._currentViewIcon = this._currentView === 'map' ? 'list' : 'map';
 			});
 	}
 
-	triggerMap() {
-		this._resetView()
-		this.view.list = true;
-		this.view.location = true;
-		this.router.navigate(["/map"]);
-	}
-
-	triggerList() {
-		this._resetView()
-		this.view.map = true;
-		this.view.location = true;
-		this.router.navigate(["/list"]);
-	}
-
-	triggerLocation() {
-		this._resetView()
-		this.view.back = true;
-		this.router.navigate(["/location"]);
-	}
-
-	triggerBack() {
+	triggerView(visibleView) {
 		this._resetView();
-		for (let viewItem in this.view) {
-			if (this._previousUrl.indexOf(viewItem) > -1) {
-				this.view[viewItem] = true;
-				break;
-			}
-		}
-		this.view.location = true;
-		this.router.navigate([this._previousUrl]);
+		visibleView.forEach(viewItem => this.view[viewItem] = true);
 	}
 
 	_resetView() {

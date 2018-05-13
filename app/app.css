@@ -6,6 +6,14 @@ Page {
 }
 
 TextField {
-    padding: 10;
-    font-size: 13;
+	padding: 10;
+	font-size: 20;
+	border-bottom-width: 2;
+	border-bottom-color: #0F3E4E;
+	color: #0F3E4E;
+}
+
+Label {
+    font-weight: 700;
+    color:#022835;
 }

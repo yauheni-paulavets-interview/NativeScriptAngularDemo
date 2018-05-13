@@ -2,11 +2,6 @@ GridLayout GridLayout {
     margin: 0 30 0 30;
 }
 
-GridLayout GridLayout Label {
-    font-weight: 700;
-    color:#022835;
-}
-
 .visible {
     animation-name: show;
     animation-duration: 1s;

@@ -37,8 +37,6 @@ import {
 
 import {
 	HeaderComponent,
-	FilterComponent,
-	GooglePlacesAutocompleteComponent
 } from './custom/components';
 
 import * as platform from "platform";
@@ -62,8 +60,6 @@ if (platform.isIOS) {
 	declarations: [
 		AppComponent,
 		HeaderComponent,
-		FilterComponent,
-		GooglePlacesAutocompleteComponent,
 		...routingComponents
 	],
 	providers: [

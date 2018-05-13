@@ -1,15 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
+import { TextView } from "ui/text-view";
 
 @Component({
 	selector: 'location-view',
 	moduleId: module.id,
-	templateUrl: './location-view.component.html'
+	templateUrl: './location-view.component.html',
+	styleUrls: ['./location-view.component.css']
 })
-export class LocationViewComponent implements OnInit {
+export class LocationViewComponent {
+
+	comment: string = '';
 
 	constructor() { }
 
-	ngOnInit() {
+	submit() {
+		
 	}
-
 }
