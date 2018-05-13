@@ -1,1 +1,2 @@
-export { Location } from './Location'; 
+export { Location } from './location'; 
+export { Attachment } from './attachment'; 

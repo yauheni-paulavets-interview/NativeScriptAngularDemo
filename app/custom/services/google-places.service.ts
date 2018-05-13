@@ -10,6 +10,9 @@ export class GooglePlacesService {
 	locationSelectionSource: Subject<any> = new Subject<any>();
 	locationSelections$ = this.locationSelectionSource.asObservable();
 
+	autocompleteVisibilitySource: Subject<any> = new Subject<any>();
+	autocompleteVisibility$ = this.autocompleteVisibilitySource.asObservable();
+
 	private lastResults: Array<any>;
 
 	constructor(@Inject('GoogleApiKey') private googleApiKey,

@@ -37,7 +37,7 @@ export class LocationsMapComponent extends LocationsCommonLogic implements OnDes
 	mapView: MapView;
 
 	_filter: any = {};
-	_isInited: boolean = false;
+	isInited: boolean = false;
 
 	constructor(@Inject('DefaultLocation') public defaultLocation,
 		@Inject('Zoom') public zoom,
@@ -104,8 +104,8 @@ export class LocationsMapComponent extends LocationsCommonLogic implements OnDes
 
 	onMapReady(event) {
 		//Regardless custom reuse strategy relaunches each trigger.
-		if (!this._isInited) {
-			this._isInited = true;
+		if (!this.isInited) {
+			this.isInited = true;
 			this.mapView = event.object;
 			this.locationStorage.getAllLocations()
 				//If callback is sync - without dealy markers are not drawn.

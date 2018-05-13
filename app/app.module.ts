@@ -26,7 +26,8 @@ import {
 } from './custom/constants';
 
 import {
-	LocationDao
+	LocationDao,
+	AttachmentDao
 } from './custom/dao';
 
 import {
@@ -65,6 +66,7 @@ if (platform.isIOS) {
 	],
 	providers: [
 		LocationDao,
+		AttachmentDao,
 		LocationStorageService,
 		FilterLocationService,
 		GooglePlacesService,

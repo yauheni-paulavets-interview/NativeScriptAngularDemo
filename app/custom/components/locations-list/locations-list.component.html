@@ -1,5 +1,5 @@
 <GridLayout rows="*" columns="*">
-    <ListView [items]="locations$ | async" [class.visible]="listLoaded" row="1">
+    <ListView [items]="locations$ | async" [class.show]="!isLoading" row="1">
         <ng-template let-item="item">
             <GridLayout columns="auto, *" rows="auto, auto" (tap)="handleSelection(item.Id)">
                 <Label col="0" row="0" text="Location Name:" class="label"></Label>

@@ -1,4 +1,4 @@
-<StackLayout orientation="vertical" padding="10">
+<StackLayout orientation="vertical" padding="10" [class.hide]="isLoading">
 	<Label text="Find Location"></Label>
 	<RadAutoCompleteTextView hint="Type In Address" [items]="dataItems" #locationAutocomplete 
 							 suggestMode="Suggest" suggestMode="Suggest" displayMode="Plain" completionMode="Contains" 

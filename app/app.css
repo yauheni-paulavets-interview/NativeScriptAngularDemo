@@ -17,3 +17,23 @@ Label {
     font-weight: 700;
     color:#022835;
 }
+
+.show {
+    animation-name: show;
+    animation-duration: 2s;
+    animation-fill-mode: forwards;
+}
+@keyframes show {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hide {
+    animation-name: hide;
+    animation-duration: 1s;
+    animation-fill-mode: backwards;
+}
+@keyframes hide {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}

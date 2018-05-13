@@ -1,13 +1,3 @@
 GridLayout GridLayout {
     margin: 0 30 0 30;
 }
-
-.visible {
-    animation-name: show;
-    animation-duration: 1s;
-    animation-fill-mode: forwards;
-}
-@keyframes show {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}

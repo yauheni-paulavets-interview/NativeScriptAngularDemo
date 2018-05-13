@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { RadAutoCompleteTextViewComponent } from "nativescript-ui-autocomplete/angular";
 import { TokenModel, AutoCompleteEventData, RadAutoCompleteTextView } from "nativescript-ui-autocomplete";
 import { ObservableArray } from "tns-core-modules/data/observable-array";
@@ -8,6 +8,7 @@ import {
 	GooglePlacesService
 } from '../../services';
 import { Location } from '~/custom/model';
+import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
@@ -16,11 +17,14 @@ import { Location } from '~/custom/model';
 	templateUrl: './google-places-autocomplete.component.html',
 	styleUrls: ['./google-places-autocomplete.component.css']
 })
-export class GooglePlacesAutocompleteComponent implements OnInit {
+export class GooglePlacesAutocompleteComponent implements OnInit, OnDestroy {
+
+	isLoading: boolean = false;
 
 	_items: ObservableArray<TokenModel> = new ObservableArray<TokenModel>();
 	_lastSelectedLocation: Location;
-	_justSelected: boolean = false; 
+	_justSelected: boolean = false;
+	_visibilitySubscr: Subscription;
 
 	@ViewChild('locationAutocomplete') locationAutocomplete: RadAutoCompleteTextViewComponent;
 
@@ -29,6 +33,11 @@ export class GooglePlacesAutocompleteComponent implements OnInit {
 
 	ngOnInit() {
 		this.locationAutocomplete.autoCompleteTextView.loadSuggestionsAsync = this.googlePlacesService.getAutocompleteHandler();
+		this._visibilitySubscr = this.googlePlacesService.autocompleteVisibility$.subscribe(() => this.isLoading = true);
+	}
+
+	ngOnDestroy() {
+		this._visibilitySubscr.unsubscribe();
 	}
 
 	get dataItems(): ObservableArray<TokenModel> {
@@ -54,6 +63,5 @@ export class GooglePlacesAutocompleteComponent implements OnInit {
 	}
 }
 
-	
 
-	
+

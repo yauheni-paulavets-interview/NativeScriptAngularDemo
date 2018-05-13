@@ -1,11 +1,28 @@
 <StackLayout>
-	<StackLayout>
-		<TextView *ngIf="!!persistedLocationInitialState" [(ngModel)]="location.name__c" [editable]="false" class="grayed" ></TextView>
+	<StackLayout [class.hide]="isLoading">
+		<TextView *ngIf="!!persistedLocationInitialState" [(ngModel)]="location.name__c" [editable]="false" class="grayed"></TextView>
 		<TextView [(ngModel)]="location.comment__c" hint="Enter Location Comment" [editable]="true"></TextView>
 	</StackLayout>
-	<GridLayout rows="auto" columns="*, auto, auto">
+	<GridLayout rows="auto" columns="*, auto, auto" [class.hide]="isLoading">
 		<Label text="" col="0"></Label>
 		<Button col="1" *ngIf="!!persistedLocationInitialState" text="Delete" class="submit-button" (tap)="delete()"></Button>
 		<Button col="2" text="Submit" class="submit-button" (tap)="submit()" [isEnabled]="submitEnabled"></Button>
 	</GridLayout>
+	<StackLayout *ngIf="attachments.length > 0" class="attachments" [class.show]="!areAttachmentsLoading" [class.hide]="isLoading">	
+		<Label text="Attachments"></Label>
+		<StackLayout>
+			<ListView [items]="attachments">
+				<ng-template let-item="item">
+					<GridLayout columns="auto, *">
+						<Button  *ngIf="!item.isProcessing" col="0" text="Delete" class="submit-button" (tap)="deleteAttach(item)"></Button>
+						<ActivityIndicator col="0" busy="true" *ngIf="item.isProcessing"></ActivityIndicator>
+						<FlexboxLayout col="1" justifyContent="space-around">
+							<TextView [text]="item.attachment.Name" [editable]="false" class="link" (tap)="showAttach(item.downloadUrl + item.attachment.Id)"></TextView>
+						</FlexboxLayout>
+					</GridLayout>
+				</ng-template>
+			</ListView>
+		</StackLayout>
+	</StackLayout>
+	<ActivityIndicator [busy]="areAttachmentsLoading || isLoading" [visibility]="areAttachmentsLoading || isLoading ? 'visible' : 'collapse'" horizontalAlignment="center" verticalAlignment="center"></ActivityIndicator>
 </StackLayout>
