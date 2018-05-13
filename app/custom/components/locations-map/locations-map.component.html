@@ -3,5 +3,5 @@
     <MapView #mapView [latitude]="defaultLocation.coordinates__Latitude__s" [longitude]="defaultLocation.coordinates__Longitude__s"
              [zoom]="zoom.default" [bearing]="bearing"
              [tilt]="tilt" i-padding="50,50,50,50" [padding]="padding" (mapReady)="onMapReady($event)"
-             (markerSelect)="onMarkerEvent($event)"></MapView>
+             (markerSelect)="handleSelection($event.marker.userData)"></MapView>
 </GridLayout>

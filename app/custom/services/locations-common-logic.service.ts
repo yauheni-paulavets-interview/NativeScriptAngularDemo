@@ -1,5 +1,23 @@
-//'Or', case-sensitive filter.
-export class FilterPredicate {
+import { Subject } from 'rxjs/Subject';
+import { Subscription } from 'rxjs/Subscription';
+
+import {
+	NavigationService
+} from '.';
+
+
+export class LocationsCommonLogic {
+
+	//Component internal Observable
+	//To trigger the same recalculation method upon any change
+	protected _locationsSource: Subject<any> = new Subject<any>();
+	protected _locations$ = this._locationsSource.asObservable();
+	protected _internalSubscription;
+
+	constructor(protected navigationService: NavigationService) {
+	}
+
+	//'Or', case-sensitive filter.
 	filter(records: Array<any>, filter): Array<any> {
 		let filterIsEmpty = true;
 		for (let key in filter) {
@@ -24,5 +42,13 @@ export class FilterPredicate {
 				return result;
 			});
 		}
+	}
+
+	handleSelection(locationId) {
+		this.navigationService.locationUpdate(locationId);
+	}
+
+	ngOnDestroy() {
+		this._internalSubscription.unsubscribe();
 	}
 }

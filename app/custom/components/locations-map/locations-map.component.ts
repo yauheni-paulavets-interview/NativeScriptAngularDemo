@@ -3,7 +3,6 @@ import { registerElement } from 'nativescript-angular/element-registry';
 import { MapView, Marker, Position } from 'nativescript-google-maps-sdk';
 
 import { Subscription } from 'rxjs/Subscription';
-import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/delay';
 
 import { Location } from '../../model';
@@ -11,7 +10,7 @@ import { Location } from '../../model';
 import {
 	LocationStorageService,
 	FilterLocationService,
-	FilterPredicate,
+	LocationsCommonLogic,
 	NavigationService
 } from '../../services';
 
@@ -27,12 +26,7 @@ declare const GMSCameraUpdate: any;
 	moduleId: module.id,
 	templateUrl: './locations-map.component.html'
 })
-export class LocationsMapComponent extends FilterPredicate implements OnDestroy {
-
-	//Component internal Observable
-	//To trigger the same recalculation method upon any change
-	_locationsSource: Subject<any> = new Subject<any>();
-	_locations$ = this._locationsSource.asObservable();
+export class LocationsMapComponent extends LocationsCommonLogic implements OnDestroy {
 
 	_modifiedLocationSubscription: Subscription;
 	_filterSubscription: Subscription;
@@ -49,20 +43,21 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 		@Inject('Zoom') public zoom,
 		private locationStorage: LocationStorageService,
 		private filterLocationService: FilterLocationService,
-		private navigationService: NavigationService) {
+		navigationService: NavigationService) {
 
-		super();
+		super(navigationService);
 
 		//New location is provided via the google places input + the related location is persisted in Salesforce
 		this._listenToNewLocation();
 		//New filter value is provided
 		this._listenToNewFilterValue();
-		this._locations$.subscribe(() => {
+		this._internalSubscription = this._locations$.subscribe(() => {
 			this._recalculateFilteredAndBounds();
 		});
 	}
 
 	ngOnDestroy() {
+		super.ngOnDestroy();
 		this._modifiedLocationSubscription.unsubscribe();
 		this._filterSubscription.unsubscribe();
 	}
@@ -121,10 +116,5 @@ export class LocationsMapComponent extends FilterPredicate implements OnDestroy 
 					});
 		}
 
-	}
-
-	onMarkerEvent(args) {
-		let marker = args.marker;
-		this.navigationService.locationUpdate(marker.userData);
 	}
 }

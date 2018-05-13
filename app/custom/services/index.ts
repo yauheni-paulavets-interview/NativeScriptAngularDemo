@@ -1,5 +1,5 @@
 export * from './location-storage.service';
 export * from './filter-location.service';
-export * from './filter-predicate';
+export * from './locations-common-logic.service';
 export * from './google-places.service';
 export * from './navigation.service';

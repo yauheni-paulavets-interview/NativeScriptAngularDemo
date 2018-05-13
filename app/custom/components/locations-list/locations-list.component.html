@@ -1,7 +1,7 @@
 <GridLayout rows="*" columns="*">
     <ListView [items]="locations$ | async" [class.visible]="listLoaded" row="1">
         <ng-template let-item="item">
-            <GridLayout columns="auto, *" rows="auto, auto">
+            <GridLayout columns="auto, *" rows="auto, auto" (tap)="handleSelection(item.Id)">
                 <Label col="0" row="0" text="Location Name:" class="label"></Label>
                 <TextView col="1" row="0" [text]="item.name__c"  [editable]="false" ></TextView>
                 <Label col="0" row="1" text="Location Comment:" class="label"></Label>
