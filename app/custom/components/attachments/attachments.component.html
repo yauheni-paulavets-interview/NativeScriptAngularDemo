@@ -1,9 +1,12 @@
-<StackLayout *ngIf="attachments.length > 0" class="attachments" [class.show]="!areAttachmentsLoading" [class.hide]="isLocationLoading">
-	<Label text="Attachments"></Label>
-	<StackLayout>
+<StackLayout  class="attachments">
+	<FlexboxLayout>
+		<Label text="Attachments"></Label>
+		<Button text="Upload" (tap)="upload()" class="submit-button"></Button>
+	</FlexboxLayout>
+	<StackLayout *ngIf="attachments.length > 0" [class.show]="!areAttachmentsLoading">
 		<ListView [items]="attachments">
 			<ng-template let-item="item">
-				<GridLayout columns="auto, *">
+				<GridLayout columns="auto, *" class="attachment">
 					<Button *ngIf="!item.isProcessing" col="0" text="Delete" class="submit-button" (tap)="deleteAttach(item)"></Button>
 					<ActivityIndicator col="0" busy="true" *ngIf="item.isProcessing"></ActivityIndicator>
 					<FlexboxLayout col="1" justifyContent="space-around">

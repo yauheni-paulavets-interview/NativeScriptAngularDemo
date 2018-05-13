@@ -1,13 +1,15 @@
 <StackLayout>
 	<StackLayout [class.hide]="isLoading">
-		<TextView *ngIf="!!persistedLocationInitialState" [(ngModel)]="location.name__c" [editable]="false" class="grayed"></TextView>
-		<TextView [(ngModel)]="location.comment__c" hint="Enter Location Comment" [editable]="true"></TextView>
+		<StackLayout>
+			<TextView *ngIf="!!persistedLocationInitialState" [(ngModel)]="location.name__c" [editable]="false" class="grayed"></TextView>
+			<TextView [(ngModel)]="location.comment__c" hint="Enter Location Comment" [editable]="true"></TextView>
+		</StackLayout>
+		<GridLayout rows="auto" columns="*, auto, auto">
+			<Label text="" col="0"></Label>
+			<Button col="1" *ngIf="!!persistedLocationInitialState" text="Delete" class="submit-button" (tap)="delete()"></Button>
+			<Button col="2" text="Submit" class="submit-button" (tap)="submit()" [isEnabled]="submitEnabled"></Button>
+		</GridLayout>
+		<attachments *ngIf="!!location.Id && !isLoading" [locationId]="location.Id"></attachments>
 	</StackLayout>
-	<GridLayout rows="auto" columns="*, auto, auto" [class.hide]="isLoading">
-		<Label text="" col="0"></Label>
-		<Button col="1" *ngIf="!!persistedLocationInitialState" text="Delete" class="submit-button" (tap)="delete()"></Button>
-		<Button col="2" text="Submit" class="submit-button" (tap)="submit()" [isEnabled]="submitEnabled"></Button>
-	</GridLayout>
-	<attachments *ngIf="!!location.Id" [locationId]="location.Id" [isLocationLoading]="isLoading"></attachments>
 	<ActivityIndicator [busy]="isLoading" [visibility]="isLoading ? 'visible' : 'collapse'" horizontalAlignment="center" verticalAlignment="center"></ActivityIndicator>
 </StackLayout>

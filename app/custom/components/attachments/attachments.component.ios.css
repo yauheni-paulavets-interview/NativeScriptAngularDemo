@@ -9,7 +9,7 @@
 	border-left-color: #022835;
 }
 
-.attachments GridLayout {
+.attachments .attachment {
 	padding: 0 10 0 10;
 }
 
@@ -20,6 +20,7 @@
 
 .attachments Label {
 	margin-bottom: 10;
+	margin-right: 10;
 	font-size: 24;
 	font-weight: 700;
 }

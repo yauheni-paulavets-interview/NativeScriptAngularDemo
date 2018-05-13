@@ -34,7 +34,8 @@ import {
 	LocationStorageService,
 	FilterLocationService,
 	GooglePlacesService,
-	NavigationService
+	NavigationService,
+	FileReaderService
 } from './custom/services';
 
 import {
@@ -73,6 +74,7 @@ if (platform.isIOS) {
 		FilterLocationService,
 		GooglePlacesService,
 		NavigationService,
+		FileReaderService,
 		{ provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
 		{ provide: 'DefaultLocation', useValue: defaultLocation },
 		{ provide: 'Zoom', useValue: zoom },

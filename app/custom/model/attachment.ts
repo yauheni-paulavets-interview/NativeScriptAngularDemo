@@ -17,19 +17,20 @@ export class Attachment
 
 	constructor(config: any) {
 
-		this.file = config.file;
 		this.isProcessing = config.isProcessing;
 
 		if (config.attachment) {
 			this.attachment = config.attachment;
 		} else {
 			this.attachment = {
-				Description: (Attachment.counter++) + '',
-				ParentId: config.parentId,
-				Name: config.file.name,
+				ParentId: config.ParentId,
+				Name: config.Name,
 				IsPrivate: config.IsPrivate,
-				ContentType: config.file.type
+				ContentType: config.ContentType,
+				Id: config.Id
 			};
 		}
+
+		this.attachment.Description = (Attachment.counter++) + '';
 	}
 }

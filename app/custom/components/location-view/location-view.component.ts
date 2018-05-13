@@ -73,9 +73,6 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 		this.locationDao.insertUpdate(this.location, true)
 			.subscribe((location) => {
 				this.navigationService.back();
-				this.isLoading = false;
-			}, (error) => {
-				this.isLoading = false;
 			});
 	}
 
@@ -94,9 +91,6 @@ export class LocationViewComponent implements OnInit, OnDestroy {
 		this.locationDao.delete(this.location, true)
 			.subscribe((location) => {
 				this.navigationService.back();
-				this.isLoading = false;
-			}, (error) => {
-				this.isLoading = false;
 			});
 	}
 }

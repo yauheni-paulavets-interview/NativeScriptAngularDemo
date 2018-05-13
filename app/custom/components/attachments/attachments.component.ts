@@ -1,9 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, NgZone } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { openUrl } from "utils/utils";
 
 import {
 	AttachmentDao
 } from '../../dao';
+
+import {
+	FileReaderService
+} from '../../services';
 
 import { Attachment } from '~/custom/model';
 
@@ -17,10 +22,11 @@ export class AttachmentsComponent implements OnInit {
 
 	@Input('locationId') locationId: string;
 	areAttachmentsLoading: boolean = true;
-	@Input('isLocationLoading') isLocationLoading: boolean;
 	attachments: Array<Attachment> = [];
 
-	constructor(private attachmentDao: AttachmentDao) { }
+	constructor(private attachmentDao: AttachmentDao,
+		private fileReaderService: FileReaderService,
+		private ngZone: NgZone) { }
 
 	ngOnInit() {
 		this._fetchAttachments(this.locationId);
@@ -55,5 +61,25 @@ export class AttachmentsComponent implements OnInit {
 					attachmentWrapper.errorTakesPlace = true;
 				}
 			);
+	}
+
+	upload() {
+		let subscr: Subscription = this.fileReaderService.getFile(this.locationId)
+			.subscribe((attachment: Attachment) => {
+				subscr.unsubscribe();
+				this._handleAttachmentUpload(attachment);
+			});
+	}
+
+	_handleAttachmentUpload(attachment: Attachment) {
+		this.ngZone.run(() => {
+			this.attachments.push(attachment);
+			this.attachmentDao.insertUpdate(attachment.attachment)
+				.subscribe((uploadedAttachment) => {
+					this.attachments.splice(this.attachments.length - 1, 1, uploadedAttachment);
+				}, (error) => {
+					this.attachments.splice(this.attachments.length - 1, 1);
+				});
+		});
 	}
 }

@@ -48,7 +48,7 @@ TextView.link {
 
 .hide {
     animation-name: hide;
-    animation-duration: 1s;
+    animation-duration: 2s;
     animation-fill-mode: backwards;
 }
 @keyframes hide {
