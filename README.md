@@ -8,9 +8,9 @@ Salesforce acts as the back-end
 1. View the locations within the map
 2. View the location within the list
 3. View the location from the both views
-  1. Update the related comment
-  2. Delete the location
-  3. Manage the related attachments: upload; download; delete
+    1. Update the related comment
+    2. Delete the location
+    3. Manage the related attachments: upload; download; delete
 4. Create new location using google places autocomplete and filling in the related comment
 4. Filter locations by typing into the relevant inputs: by name/comment. The filter is case-sensitive and works like 'OR' operator
 
